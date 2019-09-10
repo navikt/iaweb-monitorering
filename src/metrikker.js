@@ -1,24 +1,30 @@
 const axios = require('axios');
-const apiMetrics = require('prometheus-api-metrics');
 const Prometheus = require('prom-client');
 
-const miljøer = ['t1', 'q1', 'q0', 'p'];
+const miljøer = ['t2', 't1', 'q1', 'q0', 'p'];
 
-const iawebnavQ1 = new Prometheus.Gauge({
-    name: 'iawebnavQ1',
-    help: 'iaweb nav q1',
-});
+const initierGauges = () => {
+    const gauges = {};
+    miljøer.forEach(miljø => {
+        const appnavnMedMiljø = "iawebnav_" + miljø;
+        gauges[appnavnMedMiljø] = new Prometheus.Gauge({
+            name: appnavnMedMiljø,
+            help: 'Selftest for ' + appnavnMedMiljø + '. 1 betyr oppe, 0 betyr nede.' ,
+        });
+    });
+    return gauges;
+};
+const gauges = initierGauges();
 
 const oppdaterMetrikker = antallMillisekunderMellomHverOppdatering =>
     setInterval(() => {
-        returnererEndepunkt200OK(urlTilIawebnav('q1')).then(
-            erOppe => {
-                iawebnavQ1.set(erOppe);
-            },
-            () => {
-                iawebnavQ1.set(0);
-            }
-        );
+        hentSelftester().then(selftestResultater => {
+            Object.keys(selftestResultater).forEach(app => {
+                gauges[app].set(
+                    selftestResultater[app].status === 200 ? 1 : 0
+                );
+            });
+        });
     }, antallMillisekunderMellomHverOppdatering);
 
 const hentSelftester = async () => {
@@ -53,16 +59,6 @@ const hentMiljøUrlStreng = miljø => {
     } else {
         return '-' + miljø;
     }
-};
-
-const returnererEndepunkt200OK = async url => {
-    return await axios.get(url).then(res => {
-        if (res.status === 200) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
 };
 
 module.exports = { oppdaterMetrikker, hentSelftester };
