@@ -1,0 +1,89 @@
+defaults: &defaults
+  docker:
+    - image: circleci/node
+
+version: 2.1
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - save_cache:
+      - run:
+          name: Bygg Docker image
+          command: docker build -t "$DOCKER_IMAGE_VERSIONED" -t "$DOCKER_IMAGE_UNVERSIONED" .
+      - run:
+          name: Push Docker image
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push "$DOCKER_IMAGE_VERSIONED"
+            docker push "$DOCKER_IMAGE_UNVERSIONED"
+
+  deploy-til-dev:
+    <<: *defaults
+    steps:
+      - deploy:
+          miljo: "dev-fss"
+          nais-json: "nais-dev-fss.json"
+  
+  deploy-til-prod:
+    <<: *defaults
+    steps:
+      - deploy:
+          miljo: "prod-fss"
+          nais-json: "nais-prod-fss.json"
+
+commands:
+  deploy:
+    description: "Deploy til et gitt miljø"
+    parameters:
+      miljo:
+        type: string
+      nais-json:
+        type: string
+    steps:
+      - checkout
+      - sett-miljovariabler
+      - run:
+          name: Deploy til << parameters.miljo >>
+          command: |
+            bash ./deploy/set-docker-image.sh << parameters.nais-json >> $DOCKER_IMAGE_VERSIONED
+            bash ./deploy/opprett-github-deployment.sh << parameters.miljo >> << parameters.nais-json >>
+
+  sett-miljovariabler:
+    steps:
+      - run:
+          name: Setter miljøvariabler
+          command: |
+            echo 'export RELEASE_VERSION="$(git rev-list --count $CIRCLE_SHA1)"' >> $BASH_ENV
+            echo 'export BRANCH_PREFIX=`[ $CIRCLE_BRANCH == "master" ] && echo "" || echo $CIRCLE_BRANCH\_`' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE_VERSIONED="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$BRANCH_PREFIX$RELEASE_VERSION"' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE_UNVERSIONED="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"' >> $BASH_ENV
+
+workflows:
+  version: 2.1
+  bygg_og_deploy:
+    jobs:
+      - build
+      - deploy-til-dev:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+      - godkjenn-til-prod:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-til-prod:
+          requires:
+            - godkjenn-til-prod
+          filters:
+            branches:
+              only:
+                - master
