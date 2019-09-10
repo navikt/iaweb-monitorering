@@ -4,70 +4,60 @@ defaults: &defaults
 
 version: 2.1
 jobs:
-  build:
+  bygg:
     <<: *defaults
     steps:
       - checkout
-      - save_cache:
+      - setup_remote_docker
       - run:
           name: Bygg Docker image
-          command: docker build -t "$DOCKER_IMAGE_VERSIONED" -t "$DOCKER_IMAGE_UNVERSIONED" .
+          command: docker build -t "navikt/iaweb-monitorering:$CIRCLE_SHA1" .
       - run:
           name: Push Docker image
           command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push "$DOCKER_IMAGE_VERSIONED"
-            docker push "$DOCKER_IMAGE_UNVERSIONED"
+            echo $DOCKER_PASSWORD | docker login --username $DOCKER_LOGIN --password-stdin
+            docker push "navikt/iaweb-monitorering:$CIRCLE_SHA1"
+            echo "Docker image: $CIRCLE_SHA1"
 
   deploy-til-dev:
-    <<: *defaults
+    docker:
+      - image: 'navikt/deployment-cli:v0.3.0'
     steps:
       - deploy:
-          miljo: "dev-fss"
-          nais-json: "nais-dev-fss.json"
-  
+          cluster: "dev-sbs"
+          nais-yaml: "dev-nais.yaml"
+
   deploy-til-prod:
-    <<: *defaults
+    docker:
+      - image: 'navikt/deployment-cli:v0.3.0'
     steps:
       - deploy:
-          miljo: "prod-fss"
-          nais-json: "nais-prod-fss.json"
+          cluster: "prod-sbs"
+          nais-yaml: "prod-nais.yaml"
 
 commands:
   deploy:
-    description: "Deploy til et gitt miljø"
+    description: Deploy til et gitt miljø
     parameters:
-      miljo:
+      cluster:
         type: string
-      nais-json:
+      nais-yaml:
         type: string
     steps:
       - checkout
-      - sett-miljovariabler
       - run:
-          name: Deploy til << parameters.miljo >>
-          command: |
-            bash ./deploy/set-docker-image.sh << parameters.nais-json >> $DOCKER_IMAGE_VERSIONED
-            bash ./deploy/opprett-github-deployment.sh << parameters.miljo >> << parameters.nais-json >>
-
-  sett-miljovariabler:
-    steps:
-      - run:
-          name: Setter miljøvariabler
-          command: |
-            echo 'export RELEASE_VERSION="$(git rev-list --count $CIRCLE_SHA1)"' >> $BASH_ENV
-            echo 'export BRANCH_PREFIX=`[ $CIRCLE_BRANCH == "master" ] && echo "" || echo $CIRCLE_BRANCH\_`' >> $BASH_ENV
-            echo 'export DOCKER_IMAGE_VERSIONED="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$BRANCH_PREFIX$RELEASE_VERSION"' >> $BASH_ENV
-            echo 'export DOCKER_IMAGE_UNVERSIONED="$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"' >> $BASH_ENV
+          name: Deploy til << parameters.cluster >>
+          command: deployment-cli deploy create --cluster=<< parameters.cluster >> --repository=navikt/iaweb-monitorering --team=teamtag --resource=<< parameters.nais-yaml >> --version=$CIRCLE_SHA1 --ref=$CIRCLE_BRANCH
 
 workflows:
   version: 2.1
   bygg_og_deploy:
     jobs:
-      - build
+      - bygg:
+          context: NAIS deployment
       - deploy-til-dev:
           requires:
-            - build
+            - bygg
           filters:
             branches:
               only:
@@ -75,7 +65,7 @@ workflows:
       - godkjenn-til-prod:
           type: approval
           requires:
-            - build
+            - bygg
           filters:
             branches:
               only:
