@@ -6,7 +6,11 @@ const apiMetrics = require('prometheus-api-metrics');
 const BASE_PATH = '/iaweb-monitorering';
 const PORT = 8080;
 
-oppdaterMetrikker(10000);
+const erIFSS = process.env.NAIS_CLUSTER_NAME.toLowerCase().includes('fss');
+
+const apperSomSkalMonitoreres = erIFSS ? ['iawebinternal', 'iawebsolr'] : ['iawebnav'];
+
+oppdaterMetrikker(apperSomSkalMonitoreres, 10000);
 
 const startServer = () => {
     app.get(`${BASE_PATH}/internal/isAlive`, (req, res) => res.sendStatus(200));

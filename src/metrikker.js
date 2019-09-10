@@ -5,51 +5,63 @@ const miljøer = ['t2', 't1', 'q1', 'q0', 'p'];
 
 const initierGauges = () => {
     const gauges = {};
-    miljøer.forEach(miljø => {
-        const appnavnMedMiljø = 'iawebnav_' + miljø;
-        gauges[appnavnMedMiljø] = new Prometheus.Gauge({
-            name: appnavnMedMiljø,
-            help: 'Selftest for ' + appnavnMedMiljø + '. 1 betyr oppe, 0 betyr nede.',
+    ['iawebinternal', 'iawebsolr', 'iawebnav'].forEach(app => {
+        miljøer.forEach(miljø => {
+            const appnavnMedMiljø = lagAppnavnMedMiljø(app, miljø);
+            gauges[appnavnMedMiljø] = new Prometheus.Gauge({
+                name: appnavnMedMiljø,
+                help: 'Selftest for ' + appnavnMedMiljø + '. 1 betyr oppe, 0 betyr nede.',
+            });
         });
     });
     return gauges;
 };
 const gauges = initierGauges();
 
-const oppdaterMetrikker = antallMillisekunderMellomHverOppdatering =>
+const oppdaterMetrikker = (apperSomSkalMonitoreres, antallMillisekunderMellomHverOppdatering) =>
     setInterval(() => {
-        hentSelftester().then(selftestResultater => {
+        hentSelftester(apperSomSkalMonitoreres).then(selftestResultater => {
             Object.keys(selftestResultater).forEach(app => {
                 gauges[app].set(selftestResultater[app].status === 200 ? 1 : 0);
             });
         });
     }, antallMillisekunderMellomHverOppdatering);
 
-const hentSelftester = async () => {
+const hentSelftester = async (apperSomSkalMonitoreres) => {
     const selftester = {};
     await Promise.all(
-        miljøer.map(async miljø => {
-            const app = 'iawebnav_' + miljø;
-            try {
-                const selftestResultat = await axios.get(urlTilIawebnav(miljø));
-                selftester[app] = {
-                    status: selftestResultat.status,
-                    data: selftestResultat.data,
-                };
-            } catch (error) {
-                selftester[app] = {
-                    status: 'kall feilet',
-                    data: error.message,
-                };
-            }
+        apperSomSkalMonitoreres.map(app => {
+            miljøer.map(async miljø => {
+                const appnavnMedMiljø = lagAppnavnMedMiljø(app, miljø);
+                try {
+                    const selftestResultat = await axios.get(urlTilApp(appnavnMedMiljø, miljø));
+                    selftester[appnavnMedMiljø] = {
+                        status: selftestResultat.status,
+                        data: selftestResultat.data,
+                    };
+                } catch (error) {
+                    selftester[appnavnMedMiljø] = {
+                        status: 'kall feilet',
+                        data: error.message,
+                    };
+                }
+            });
         })
     );
     return selftester;
 };
 
-const urlTilIawebnav = miljø => {
-    return `https://itjenester${hentMiljøUrlStreng(miljø)}.oera.no/iaweb/internal/selftest.json`;
+const urlTilApp = (app, miljø) => {
+    if (app === 'iawebnav') {
+        return `https://itjenester${hentMiljøUrlStreng(miljø)}.oera.no/iaweb/internal/selftest.json`;
+    } else if (app === 'iawebinternal') {
+        return `https://app${hentMiljøUrlStreng(miljø)}.adeo.no/iaweb/internal/selftest.json`;
+    } else if (app === 'iawebsolr') {
+        return `https://app${hentMiljøUrlStreng(miljø)}.adeo.no/iaweb-solr/internal/selftest.json`;
+    }
 };
+
+const lagAppnavnMedMiljø = (app, miljø) => `${app}_${miljø}`;
 
 const hentMiljøUrlStreng = miljø => {
     if (miljø === 'p') {
