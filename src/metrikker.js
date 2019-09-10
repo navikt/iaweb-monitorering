@@ -1,7 +1,7 @@
 const axios = require('axios');
+const apiMetrics = require('prometheus-api-metrics');
 const Prometheus = require('prom-client');
 
-type Miljø = 't1' | 'q1' | 'q0' | 'p';
 const miljøer = ['t1', 'q1', 'q0', 'p'];
 
 const iawebnavQ1 = new Prometheus.Gauge({
@@ -21,34 +21,33 @@ const oppdaterMetrikker = antallMillisekunderMellomHverOppdatering =>
         );
     }, antallMillisekunderMellomHverOppdatering);
 
-type SelftestResultat = {status: number | string, data: any};
-const hentSelftester = async (): Promise<{[app: string]: SelftestResultat}> => {
-    const selftester = {};
+const hentMetrikker = async () => {
+    const metrikker = {};
     await Promise.all(
-        miljøer.map(async (miljø: Miljø) => {
-            const app = 'iawebnav_' + miljø;
+        miljøer.map(async miljø => {
+            const metrikknavn = 'iawebnav_' + miljø;
             try {
                 const resultatSelftest = await axios.get(urlTilIawebnav(miljø));
-                selftester[app] = {
+                metrikker[metrikknavn] = {
                     status: resultatSelftest.status,
                     data: resultatSelftest.data,
                 };
             } catch (error) {
-                selftester[app] = {
+                metrikker[metrikknavn] = {
                     status: 'kall feilet',
                     data: error.message,
                 };
             }
         })
     );
-    return selftester;
+    return metrikker;
 };
 
-const urlTilIawebnav = (miljø: Miljø) => {
+const urlTilIawebnav = miljø => {
     return `https://itjenester${hentMiljøUrlStreng(miljø)}.oera.no/iaweb/internal/selftest.json`;
 };
 
-const hentMiljøUrlStreng = (miljø: Miljø): string => {
+const hentMiljøUrlStreng = miljø => {
     if (miljø === 'p') {
         return '';
     } else {
@@ -56,7 +55,7 @@ const hentMiljøUrlStreng = (miljø: Miljø): string => {
     }
 };
 
-const returnererEndepunkt200OK = async (url: string): Promise<number> => {
+const returnererEndepunkt200OK = async url => {
     return await axios.get(url).then(res => {
         if (res.status === 200) {
             return 1;
@@ -66,4 +65,4 @@ const returnererEndepunkt200OK = async (url: string): Promise<number> => {
     });
 };
 
-module.exports = { oppdaterMetrikker, hentMetrikker: hentSelftester };
+module.exports = { oppdaterMetrikker, hentMetrikker };
