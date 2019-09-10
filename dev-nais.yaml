@@ -6,14 +6,14 @@ metadata:
     labels:
         team: teamtag
 spec:
-    image: navikt/iaweb-monitorering:{{version}}
+    image: navikt/iaweb-monitorering:c4086431f61edfdc6ced08f0b8283ac4c90aa4ac
     team: teamtag
     port: 3000
     ingresses:
-        - https://arbeidsgiver-q.nav.no/iaweb-monitorering
+        - https://iaweb-monitorering.nais.oera-q.local
     liveness:
-        path: /iaweb-monitorering/internal/isAlive
+        path: /internal/isAlive
         initialDelay: 20
     readiness:
-        path: /iaweb-monitorering/internal/isReady
+        path: /internal/isReady
         initialDelay: 20
