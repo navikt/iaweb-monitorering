@@ -38,7 +38,7 @@ const hentMiljøUrlStreng = miljø => {
 };
 
 const returnererEndepunkt200OK = async (url) => {
-    return await axios.get('https://arbeidsgiver-q.nav.no/kontakt-oss/internal/isAslive').then(res => {
+    return await axios.get(url).then(res => {
         if (res.status === 200) {
             return 1;
         } else {
