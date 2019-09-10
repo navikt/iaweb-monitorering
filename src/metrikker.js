@@ -6,10 +6,10 @@ const miljøer = ['t2', 't1', 'q1', 'q0', 'p'];
 const initierGauges = () => {
     const gauges = {};
     miljøer.forEach(miljø => {
-        const appnavnMedMiljø = "iawebnav_" + miljø;
+        const appnavnMedMiljø = 'iawebnav_' + miljø;
         gauges[appnavnMedMiljø] = new Prometheus.Gauge({
             name: appnavnMedMiljø,
-            help: 'Selftest for ' + appnavnMedMiljø + '. 1 betyr oppe, 0 betyr nede.' ,
+            help: 'Selftest for ' + appnavnMedMiljø + '. 1 betyr oppe, 0 betyr nede.',
         });
     });
     return gauges;
@@ -20,9 +20,7 @@ const oppdaterMetrikker = antallMillisekunderMellomHverOppdatering =>
     setInterval(() => {
         hentSelftester().then(selftestResultater => {
             Object.keys(selftestResultater).forEach(app => {
-                gauges[app].set(
-                    selftestResultater[app].status === 200 ? 1 : 0
-                );
+                gauges[app].set(selftestResultater[app].status === 200 ? 1 : 0);
             });
         });
     }, antallMillisekunderMellomHverOppdatering);
