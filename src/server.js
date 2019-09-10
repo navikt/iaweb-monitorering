@@ -1,4 +1,4 @@
-const {oppdaterMetrikker, hentMetrikker } = require('../metrikker');
+const {oppdaterMetrikker, hentMetrikker } = require('./metrikker');
 const express = require('express');
 const app = express();
 const apiMetrics = require('prometheus-api-metrics');

@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm i --frozen-lockfile
-COPY src/server/ src/server/
+COPY src/ src/
 
 EXPOSE 8080
-ENTRYPOINT ["node", "src/server/server.js"]
+ENTRYPOINT ["node", "src/server.js"]
