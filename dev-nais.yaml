@@ -6,7 +6,7 @@ metadata:
     labels:
         team: teamtag
 spec:
-    image: navikt/iaweb-monitorering:bf3025da93d65d320ac80a1345373960fb1e862a
+    image: navikt/iaweb-monitorering:{{latest}}
     team: teamtag
     port: 8080
     ingresses:
@@ -17,3 +17,6 @@ spec:
     readiness:
         path: /iaweb-monitorering/internal/isReady
         initialDelay: 5
+    prometheus:
+        enabled: true
+        path: /iaweb-monitorering/internal/metrics
