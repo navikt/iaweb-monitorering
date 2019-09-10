@@ -21,26 +21,26 @@ const oppdaterMetrikker = antallMillisekunderMellomHverOppdatering =>
         );
     }, antallMillisekunderMellomHverOppdatering);
 
-const hentMetrikker = async () => {
-    const metrikker = {};
+const hentSelftester = async () => {
+    const selftester = {};
     await Promise.all(
         miljøer.map(async miljø => {
-            const metrikknavn = 'iawebnav_' + miljø;
+            const app = 'iawebnav_' + miljø;
             try {
-                const resultatSelftest = await axios.get(urlTilIawebnav(miljø));
-                metrikker[metrikknavn] = {
-                    status: resultatSelftest.status,
-                    data: resultatSelftest.data,
+                const selftestResultat = await axios.get(urlTilIawebnav(miljø));
+                selftester[app] = {
+                    status: selftestResultat.status,
+                    data: selftestResultat.data,
                 };
             } catch (error) {
-                metrikker[metrikknavn] = {
+                selftester[app] = {
                     status: 'kall feilet',
                     data: error.message,
                 };
             }
         })
     );
-    return metrikker;
+    return selftester;
 };
 
 const urlTilIawebnav = miljø => {
@@ -65,4 +65,4 @@ const returnererEndepunkt200OK = async url => {
     });
 };
 
-module.exports = { oppdaterMetrikker, hentMetrikker };
+module.exports = { oppdaterMetrikker, hentSelftester };

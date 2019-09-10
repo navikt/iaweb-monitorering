@@ -1,4 +1,4 @@
-const { oppdaterMetrikker, hentMetrikker } = require('./metrikker');
+const { oppdaterMetrikker, hentSelftester } = require('./metrikker');
 const express = require('express');
 const app = express();
 const apiMetrics = require('prometheus-api-metrics');
@@ -13,7 +13,7 @@ const startServer = () => {
     app.get(`${BASE_PATH}/internal/isReady`, (req, res) => res.sendStatus(200));
 
     app.get(`${BASE_PATH}/internal/metrikker`, (req, res) => {
-        hentMetrikker().then(metrikker => {
+        hentSelftester().then(metrikker => {
             res.send(metrikker);
         });
     });
