@@ -28,27 +28,42 @@ const oppdaterMetrikker = (apperSomSkalMonitoreres, antallMillisekunderMellomHve
         });
     }, antallMillisekunderMellomHverOppdatering);
 
+const hentSelftestResultat = async (app, miljø) => {
+    try {
+        const selftestResultat = await axios.get(urlTilApp(app, miljø));
+        return {
+            status: selftestResultat.status,
+            data: selftestResultat.data,
+        };
+    } catch (error) {
+        return {
+            status: 'kall feilet',
+            data: error.message,
+        };
+    }
+};
+
 const hentSelftester = async apperSomSkalMonitoreres => {
+    const apperOgMiljøer = apperSomSkalMonitoreres.reduce((listeMedApperOgMiljøer, app) => {
+        const gjeldendeAppMedAlleMiljøer = miljøer.map(miljø => {
+            return {
+                app: app,
+                miljø: miljø,
+            };
+        });
+
+        return [...listeMedApperOgMiljøer, ...gjeldendeAppMedAlleMiljøer];
+    }, []);
+
     const selftester = {};
+
     await Promise.all(
-        apperSomSkalMonitoreres.map(app => {
-            miljøer.map(async miljø => {
-                const appnavnMedMiljø = lagAppnavnMedMiljø(app, miljø);
-                try {
-                    const selftestResultat = await axios.get(urlTilApp(appnavnMedMiljø, miljø));
-                    selftester[appnavnMedMiljø] = {
-                        status: selftestResultat.status,
-                        data: selftestResultat.data,
-                    };
-                } catch (error) {
-                    selftester[appnavnMedMiljø] = {
-                        status: 'kall feilet',
-                        data: error.message,
-                    };
-                }
-            });
+        apperOgMiljøer.map(async ({ app, miljø }) => {
+            const appnavnMedMiljø = lagAppnavnMedMiljø(app, miljø);
+            selftester[appnavnMedMiljø] = await hentSelftestResultat(app, miljø);
         })
     );
+
     return selftester;
 };
 
