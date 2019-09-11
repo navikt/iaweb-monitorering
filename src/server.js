@@ -5,7 +5,7 @@ const apiMetrics = require('prometheus-api-metrics');
 
 const BASE_PATH = '/iaweb-monitorering';
 const PORT = 8080;
-process.env.NAIS_CLUSTER_NAME='fss'
+
 const erIFSS = process.env.NAIS_CLUSTER_NAME.toLowerCase().includes('fss');
 const apperSomSkalMonitoreres = erIFSS ? ['iawebinternal', 'iawebsolr'] : ['iawebnav'];
 
