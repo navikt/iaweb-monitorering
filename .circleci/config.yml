@@ -19,21 +19,37 @@ jobs:
             docker push "navikt/iaweb-monitorering:$CIRCLE_SHA1"
             echo "Docker image: $CIRCLE_SHA1"
 
-  deploy-til-dev:
+  deploy-til-dev-sbs:
     docker:
       - image: 'navikt/deployment-cli:v0.3.0'
     steps:
       - deploy:
           cluster: "dev-sbs"
-          nais-yaml: "dev-nais.yaml"
+          nais-yaml: "dev-sbs-nais.yaml"
 
-  deploy-til-prod:
+  deploy-til-prod-sbs:
     docker:
       - image: 'navikt/deployment-cli:v0.3.0'
     steps:
       - deploy:
           cluster: "prod-sbs"
-          nais-yaml: "prod-nais.yaml"
+          nais-yaml: "prod-sbs-nais.yaml"
+
+  deploy-til-dev-fss:
+    docker:
+      - image: 'navikt/deployment-cli:v0.3.0'
+    steps:
+      - deploy:
+          cluster: "dev-fss"
+          nais-yaml: "dev-fss-nais.yaml"
+
+  deploy-til-prod-fss:
+    docker:
+      - image: 'navikt/deployment-cli:v0.3.0'
+    steps:
+      - deploy:
+          cluster: "prod-fss"
+          nais-yaml: "prod-fss-nais.yaml"          
 
 commands:
   deploy:
@@ -55,14 +71,14 @@ workflows:
     jobs:
       - bygg:
           context: NAIS deployment
-      - deploy-til-dev:
+      - deploy-til-dev-sbs:
           requires:
             - bygg
           filters:
             branches:
               only:
                 - master
-      - godkjenn-til-prod:
+      - godkjenn-til-prod-sbs:
           type: approval
           requires:
             - bygg
@@ -70,9 +86,31 @@ workflows:
             branches:
               only:
                 - master
-      - deploy-til-prod:
+      - deploy-til-prod-sbs:
           requires:
-            - godkjenn-til-prod
+            - godkjenn-til-prod-sbs
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-til-dev-fss:
+          requires:
+            - bygg
+          filters:
+            branches:
+              only:
+                - master
+      - godkjenn-til-prod-fss:
+          type: approval
+          requires:
+            - bygg
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-til-prod-fss:
+          requires:
+            - godkjenn-til-prod-fss
           filters:
             branches:
               only:
