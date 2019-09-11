@@ -6,11 +6,11 @@ metadata:
     labels:
         team: teamtag
 spec:
-    image: navikt/iaweb-monitorering:9fd878d68ff0324ebd40a12e55798e7fad8e5f6e
+    image: navikt/iaweb-monitorering:{{version}}
     team: teamtag
     port: 8080
     ingresses:
-        - https://arbeidsgiver.preprod.local/iaweb-monitorering
+        - https://arbeidsgiver.nais.preprod.local/iaweb-monitorering
     liveness:
         path: /iaweb-monitorering/internal/isAlive
         initialDelay: 5

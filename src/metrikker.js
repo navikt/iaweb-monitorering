@@ -46,6 +46,7 @@ const hentSelftestResultat = async (app, miljø) => {
 const hentSelftester = async apperSomSkalMonitoreres => {
     const apperOgMiljøer = apperSomSkalMonitoreres.reduce((listeMedApperOgMiljøer, app) => {
         const gjeldendeAppMedAlleMiljøer = miljøer.map(miljø => {
+            console.log(app, miljø, urlTilApp(app, miljø));
             return {
                 app: app,
                 miljø: miljø,
