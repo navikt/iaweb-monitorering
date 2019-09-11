@@ -28,7 +28,35 @@ const oppdaterMetrikker = (apperSomSkalMonitoreres, antallMillisekunderMellomHve
         });
     }, antallMillisekunderMellomHverOppdatering);
 
+const hentSelftestResultatForIawebSolr = async (miljø) => {
+    // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
+
+    const iawebSolrOK = 'Solr status: UNI_SOLR_OK';
+    const iawebSolrIkkeOK = 'Solr status: UNI_SOLR_CRITICAL';
+
+    const selftestResultatForIawebInternal = await axios.get(urlTilApp('iawebinternal', miljø));
+    if (selftestResultatForIawebInternal.data.includes(iawebSolrOK)) {
+        return {
+            status: 200,
+            data: 'Solr status: UNI_SOLR_OK',
+        }
+    } else if (selftestResultatForIawebInternal.data.includes(iawebSolrIkkeOK)) {
+        return {
+            status: iawebSolrIkkeOK,
+            data: iawebSolrIkkeOK,
+        }
+    } else {
+        return {
+            status: 'ikke OK',
+            data: '',
+        }
+    }
+};
+
 const hentSelftestResultat = async (app, miljø) => {
+    if (app === 'iawebsolr') {
+        return await hentSelftestResultatForIawebSolr(miljø);
+    }
     try {
         const selftestResultat = await axios.get(urlTilApp(app, miljø));
         return {
@@ -46,7 +74,6 @@ const hentSelftestResultat = async (app, miljø) => {
 const hentSelftester = async apperSomSkalMonitoreres => {
     const apperOgMiljøer = apperSomSkalMonitoreres.reduce((listeMedApperOgMiljøer, app) => {
         const gjeldendeAppMedAlleMiljøer = miljøer.map(miljø => {
-            console.log(app, miljø, urlTilApp(app, miljø));
             return {
                 app: app,
                 miljø: miljø,
