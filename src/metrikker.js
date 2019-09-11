@@ -38,34 +38,40 @@ const tolkResultatForIawebSolr = selftestResultat => {
         return {
             status: selftestResultat.status,
             data: iawebSolrOK,
+            url: selftestResultat.url,
         };
     } else if (selftestResultat.data.includes(iawebSolrIkkeOK)) {
         return {
             status: iawebSolrIkkeOK,
             data: iawebSolrIkkeOK,
+            url: selftestResultat.url,
         };
     } else {
         return {
             status: 'Ikke OK',
             data: '',
+            url: selftestResultat.url,
         };
     }
 };
 
 const hentSelftestResultat = async (app, miljø) => {
+    const url = urlTilApp(app, miljø);
     try {
-        const selftestResultat = await axios.get(urlTilApp(app, miljø));
+        const selftestResultat = await axios.get(url);
         if (app === 'iawebsolr') {
             return tolkResultatForIawebSolr(selftestResultat);
         }
         return {
             status: selftestResultat.status,
             data: selftestResultat.data,
+            url: url,
         };
     } catch (error) {
         return {
             status: 'kall feilet',
             data: error.message,
+            url: url,
         };
     }
 };
