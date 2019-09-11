@@ -27,7 +27,7 @@ const oppdaterMetrikker = (apperSomSkalMonitoreres, antallMillisekunderMellomHve
         });
     }, antallMillisekunderMellomHverOppdatering);
 
-const hentSelftester = async (apperSomSkalMonitoreres) => {
+const hentSelftester = async apperSomSkalMonitoreres => {
     const selftester = {};
     await Promise.all(
         apperSomSkalMonitoreres.map(app => {
@@ -53,7 +53,9 @@ const hentSelftester = async (apperSomSkalMonitoreres) => {
 
 const urlTilApp = (app, miljø) => {
     if (app === 'iawebnav') {
-        return `https://itjenester${hentMiljøUrlStreng(miljø)}.oera.no/iaweb/internal/selftest.json`;
+        return `https://itjenester${hentMiljøUrlStreng(
+            miljø
+        )}.oera.no/iaweb/internal/selftest.json`;
     } else if (app === 'iawebinternal') {
         return `https://app${hentMiljøUrlStreng(miljø)}.adeo.no/iaweb/internal/selftest.json`;
     } else if (app === 'iawebsolr') {
