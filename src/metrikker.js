@@ -70,7 +70,7 @@ const hentSelftestResultat = async (app, miljø) => {
     } catch (error) {
         return {
             status: 'kall feilet',
-            data: error,
+            data: error.message,
             url: url,
         };
     }
