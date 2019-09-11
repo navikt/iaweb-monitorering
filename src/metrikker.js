@@ -2,6 +2,7 @@ const axios = require('axios');
 const Prometheus = require('prom-client');
 
 const miljøer = ['t2', 't1', 'q1', 'q0', 'p'];
+const lagAppnavnMedMiljø = (app, miljø) => `${app}_${miljø}`;
 
 const initierGauges = () => {
     const gauges = {};
@@ -62,8 +63,6 @@ const urlTilApp = (app, miljø) => {
         return `https://app${hentMiljøUrlStreng(miljø)}.adeo.no/iaweb-solr/internal/selftest.json`;
     }
 };
-
-const lagAppnavnMedMiljø = (app, miljø) => `${app}_${miljø}`;
 
 const hentMiljøUrlStreng = miljø => {
     if (miljø === 'p') {

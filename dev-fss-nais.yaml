@@ -1,0 +1,22 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+    name: iaweb-monitorering
+    namespace: default
+    labels:
+        team: teamtag
+spec:
+    image: navikt/iaweb-monitorering:9fd878d68ff0324ebd40a12e55798e7fad8e5f6e
+    team: teamtag
+    port: 8080
+    ingresses:
+        - https://arbeidsgiver.preprod.local/iaweb-monitorering
+    liveness:
+        path: /iaweb-monitorering/internal/isAlive
+        initialDelay: 5
+    readiness:
+        path: /iaweb-monitorering/internal/isReady
+        initialDelay: 5
+    prometheus:
+        enabled: true
+        path: /iaweb-monitorering/internal/metrics
