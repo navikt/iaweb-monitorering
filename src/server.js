@@ -6,9 +6,11 @@ const apiMetrics = require('prometheus-api-metrics');
 const BASE_PATH = '/iaweb-monitorering';
 const PORT = 8080;
 
+console.log('process.env.NAIS_CLUSTER_NAME', process.env.NAIS_CLUSTER_NAME);
 const erIFSS = process.env.NAIS_CLUSTER_NAME.toLowerCase().includes('fss');
 
 const apperSomSkalMonitoreres = erIFSS ? ['iawebinternal', 'iawebsolr'] : ['iawebnav'];
+console.log('apperSomSkalMonitoreres', apperSomSkalMonitoreres);
 
 oppdaterMetrikker(apperSomSkalMonitoreres, 10000);
 
