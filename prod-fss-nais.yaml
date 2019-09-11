@@ -10,7 +10,7 @@ spec:
     team: teamtag
     port: 8080
     ingresses:
-        - https://iaweb-monitorering.nais.oera-q.local/iaweb-monitorering
+        - https://iaweb-monitorering.nais.adeo.no/iaweb-monitorering
     liveness:
         path: /iaweb-monitorering/internal/isAlive
         initialDelay: 5
