@@ -17,7 +17,7 @@ const startServer = () => {
     app.get(`${BASE_PATH}/internal/isReady`, (req, res) => res.sendStatus(200));
 
     app.get(`${BASE_PATH}/internal/selftester`, (req, res) => {
-        hentSelftester().then(metrikker => {
+        hentSelftester(apperSomSkalMonitoreres).then(metrikker => {
             res.send(metrikker);
         });
     });
