@@ -58,7 +58,9 @@ const tolkResultatForIawebSolr = selftestResultat => {
 const hentSelftestResultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
-        const selftestResultat = await axios.get(url, {maxRedirects: 1});
+        const selftestResultat = await axios.get(url, {
+            maxRedirects: 100 // html-selftestene redirecter kallet til å inneholde et løpenummer.
+        });
         if (app === 'iawebsolr') {
             return tolkResultatForIawebSolr(selftestResultat);
         }
