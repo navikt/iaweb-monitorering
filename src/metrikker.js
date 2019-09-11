@@ -31,8 +31,8 @@ const oppdaterMetrikker = (apperSomSkalMonitoreres, antallMillisekunderMellomHve
 const tolkResultatForIawebSolr = selftestResultat => {
     // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
 
-    const iawebSolrOK = 'Solr status: UNI_SOLR_OK';
-    const iawebSolrIkkeOK = 'Solr status: UNI_SOLR_CRITICAL';
+    const iawebSolrOK = 'UNI_SOLR_OK';
+    const iawebSolrIkkeOK = 'UNI_SOLR_CRITICAL';
 
     if (selftestResultat.data.includes(iawebSolrOK)) {
         return {
@@ -48,7 +48,7 @@ const tolkResultatForIawebSolr = selftestResultat => {
         };
     } else {
         return {
-            status: 'Ikke OK',
+            status: 'ikke OK',
             data: '',
             url: selftestResultat.url,
         };
@@ -58,7 +58,11 @@ const tolkResultatForIawebSolr = selftestResultat => {
 const hentSelftestResultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
-        const selftestResultat = await axios.get(url);
+        const selftestResultat = await axios.get(url, {
+            headers: {
+                'cache-control': 'no-cache'
+            }
+        });
         if (app === 'iawebsolr') {
             return tolkResultatForIawebSolr(selftestResultat);
         }
@@ -70,7 +74,7 @@ const hentSelftestResultat = async (app, miljø) => {
     } catch (error) {
         return {
             status: 'kall feilet',
-            data: error,
+            data: error.message,
             url: url,
         };
     }
