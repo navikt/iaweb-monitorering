@@ -58,7 +58,7 @@ const tolkResultatForIawebSolr = selftestResultat => {
 const hentSelftestResultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
-        const selftestResultat = await axios.get(url);
+        const selftestResultat = await axios.get(url, {maxRedirects: 1});
         if (app === 'iawebsolr') {
             return tolkResultatForIawebSolr(selftestResultat);
         }
