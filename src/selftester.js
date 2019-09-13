@@ -32,7 +32,7 @@ const hentSelftestResultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
         const selftestResultat = await axios.get(url, {
-            withCredentials: true
+            withCredentials: true,
         });
         if (app === 'iawebsolr') {
             return tolkResultatForIawebSolr(selftestResultat);
@@ -75,35 +75,38 @@ const hentSelftester = async apperSomSkalMonitoreres => {
     return selftester;
 };
 
-const hentSelftestResultatForIawebSolr = async (miljø) => {
+const hentSelftestResultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
 
     let redirectResponse;
 
     try {
         await axios.get(url, {
-            maxRedirects: 0
+            maxRedirects: 0,
         });
     } catch (error) {
         console.log('error', error);
         redirectResponse = error.response;
-        if (!redirectResponse || !redirectResponse.status !== 302) {
-            console.log('kaster error videre. redirectResponse=' + CircularJSON.stringify(redirectResponse));
-            console.log('redirectResponse-setcookie1', CircularJSON.stringify(redirectResponse.headers['set-cookie']));
+        if (!redirectResponse || redirectResponse.status !== 302) {
+            console.log(
+                'kaster error videre. redirectResponse=' + CircularJSON.stringify(redirectResponse)
+            );
+            console.log(
+                'redirectResponse-setcookie1',
+                CircularJSON.stringify(redirectResponse.headers['set-cookie'])
+            );
             throw error;
         }
     }
     console.log('redirectResponse', redirectResponse);
     console.log('redirectResponse-setcookie2', redirectResponse.headers['set-cookie']);
 
-    return await axios.get(url, {
+    return await axios.get(redirectResponse.headers.location, {
         withCredentials: true,
-        headers:
-            {
-                'Cookie': 'cookie1=test'
-            }
+        headers: {
+            Cookie: redirectResponse.headers['set-cookie'],
+        },
     });
-
 };
 
 module.exports = { hentSelftester, hentSelftestResultatForIawebSolr };
