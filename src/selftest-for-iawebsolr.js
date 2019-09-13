@@ -47,7 +47,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
-        sleep(1000);
+        sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
         try {
             const res = await utførKallMedCookie(
                 redirectResponse.headers.location,
