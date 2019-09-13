@@ -6,7 +6,7 @@ metadata:
     labels:
         team: teamtag
 spec:
-    image: navikt/iaweb-monitorering:{{version}}
+    image: navikt/iaweb-monitorering:62b4b4405b50886d8d1811c730dd6921d18ed20b
     team: teamtag
     port: 8080
     ingresses:
@@ -20,3 +20,6 @@ spec:
     prometheus:
         enabled: true
         path: /iaweb-monitorering/internal/metrics
+    env:
+        - name: DEBUG
+          value: axios

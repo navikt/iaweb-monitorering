@@ -1,3 +1,4 @@
+require('axios-debug-log');
 const axios = require('axios');
 const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
 const CircularJSON = require('circular-json');
@@ -90,10 +91,9 @@ const hentSelftestResultatForIawebSolr = async miljø => {
             throw error;
         }
     }
-    const iawebCookieStringUtenDomain = (redirectResponse.headers['set-cookie'] + '')
+    const iawebCookie = (redirectResponse.headers['set-cookie'] + '')
         .split(',')
         .filter(cookie => cookie.includes('JSESSIONID-iaweb='))[0];
-    const iawebCookie = iawebCookieStringUtenDomain + "; domain=.app-q1.adeo.no";
 
     console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
