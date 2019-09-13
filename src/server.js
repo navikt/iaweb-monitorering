@@ -1,6 +1,7 @@
 process.env.DEBUG = 'axios';
 const { oppdaterMetrikker } = require('./metrikker');
-const { hentSelftester, hentSelftestResultatForIawebSolr } = require('./selftester');
+const { hentSelftestResultatForIawebSolr } = require('./selftest-for-iawebsolr');
+const { hentSelftester } = require('./selftester');
 const express = require('express');
 const app = express();
 const apiMetrics = require('prometheus-api-metrics');
