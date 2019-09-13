@@ -1,25 +1,6 @@
 const axios = require('axios');
-const { lagAppnavnMedMiljø, miljøer } = require('./utils');
+const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
 
-const hentMiljøUrlStreng = miljø => {
-    if (miljø === 'p') {
-        return '';
-    } else {
-        return '-' + miljø;
-    }
-};
-
-const urlTilApp = (app, miljø) => {
-    if (app === 'iawebnav') {
-        return `https://itjenester${hentMiljøUrlStreng(
-            miljø
-        )}.oera.no/iaweb/internal/selftest.json`;
-    } else if (app === 'iawebinternal') {
-        return `https://app${hentMiljøUrlStreng(miljø)}.adeo.no/iaweb/internal/selftest.json`;
-    } else if (app === 'iawebsolr') {
-        return `https://app${hentMiljøUrlStreng(miljø)}.adeo.no/iaweb/internal/selftest`;
-    }
-};
 
 const tolkResultatForIawebSolr = selftestResultat => {
     // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
@@ -95,7 +76,7 @@ const hentSelftester = async apperSomSkalMonitoreres => {
 };
 
 
-/*
+
 const hentSelftestResultatForIawebSolr = async (miljø) => {
     const url = urlTilApp('iawebsolr', miljø);
 
@@ -124,8 +105,5 @@ const hentSelftestResultatForIawebSolr = async (miljø) => {
     });
 
 };
-
-hentSelftestResultatForIawebSolr('q1');
-*/
 
 module.exports = { hentSelftester };
