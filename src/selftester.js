@@ -2,7 +2,6 @@ require('axios-debug-log');
 const axios = require('axios');
 const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
 const CircularJSON = require('circular-json');
-const sleep = require('sleep');
 
 const tolkResultatForIawebSolr = selftestResultat => {
     // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
@@ -77,6 +76,10 @@ const hentSelftester = async apperSomSkalMonitoreres => {
     return selftester;
 };
 
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+};
+
 const hentSelftestResultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
 
@@ -98,7 +101,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
 
     console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
-    await sleep.sleep(3);
+    await sleep(3);
 
     return await axios.get(redirectResponse.headers.location, {
         withCredentials: true,
