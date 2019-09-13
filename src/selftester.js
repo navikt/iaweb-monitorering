@@ -83,9 +83,6 @@ const sleep = (milliseconds) => {
 const hentSelftestResultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
 
-    console.log("sleep start...");
-    await sleep(3000);
-    console.log("sleep end");
     let redirectResponse;
 
     try {
