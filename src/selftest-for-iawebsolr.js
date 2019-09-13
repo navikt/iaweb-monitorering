@@ -22,7 +22,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     console.log('sleep end');
 
     try {
-        return await axios.get(redirectResponse.headers.location, {
+        return await api.get(redirectResponse.headers.location, {
             withCredentials: true,
             headers: {
                 maxRedirects: 0,
