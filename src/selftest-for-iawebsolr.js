@@ -16,14 +16,16 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
-        const res = await utførKallMedCookie(
-            redirectResponse.headers.location,
-            hentIawebCookie(redirectResponse)
-        );
-        if (res.status === 200) {
-            console.log('Antall forsøk mot iaweb før success: ' + i);
-            return res;
-        }
+        try {
+            const res = await utførKallMedCookie(
+                redirectResponse.headers.location,
+                hentIawebCookie(redirectResponse)
+            );
+            if (res.status === 200) {
+                console.log('Antall forsøk mot iaweb før success: ' + i);
+                return res;
+            }
+        } catch (ignored) {}
     }
 
     throw { message: 'Selftest for iawebsolr feilet. Antall forsøk: ' + MAKS_ANTALL_FORSØK };
