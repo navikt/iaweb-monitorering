@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
-
+const CircularJSON = require('circular-json');
 
 const tolkResultatForIawebSolr = selftestResultat => {
     // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
@@ -88,7 +88,7 @@ const hentSelftestResultatForIawebSolr = async (miljø) => {
         console.log('error', error);
         redirectResponse = error.response;
         if (!redirectResponse || !redirectResponse.status !== 302) {
-            console.log('kaster error videre. redirectResponse=' + JSON.stringify(redirectResponse));
+            console.log('kaster error videre. redirectResponse=' + CircularJSON.stringify(redirectResponse));
             console.log('redirectResponse-setcookie1', redirectResponse.headers['set-cookie']);
             throw error;
         }
