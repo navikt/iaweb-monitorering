@@ -89,7 +89,7 @@ const hentSelftestResultatForIawebSolr = async (miljø) => {
         redirectResponse = error.response;
         if (!redirectResponse || !redirectResponse.status !== 302) {
             console.log('kaster error videre. redirectResponse=' + CircularJSON.stringify(redirectResponse));
-            console.log('redirectResponse-setcookie1', redirectResponse.headers['set-cookie']);
+            console.log('redirectResponse-setcookie1', CircularJSON.stringify(redirectResponse.headers['set-cookie']));
             throw error;
         }
     }
