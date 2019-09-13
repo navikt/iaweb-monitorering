@@ -101,15 +101,26 @@ const hentSelftestResultatForIawebSolr = async miljø => {
 
     console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
+    console.log("sleep start...");
     await sleep(3);
+    console.log("sleep end");
 
-    return await axios.get(redirectResponse.headers.location, {
-        withCredentials: true,
-        headers: {
-            maxRedirects: 0,
-            Cookie: iawebCookie,
-        },
-    });
+    try {
+        return await axios.get(redirectResponse.headers.location, {
+            withCredentials: true,
+            headers: {
+                maxRedirects: 0,
+                Cookie: iawebCookie,
+            },
+        });
+    } catch (error) {
+        if (error.message.includes('Max redirects exceeded.')) {
+            console.log('fikk max redirects, prøver igjen...');
+            return await hentSelftestResultatForIawebSolr(miljø)
+        } else {
+            throw error;
+        }
+    }
 };
 
 module.exports = { hentSelftester, hentSelftestResultatForIawebSolr };
