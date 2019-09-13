@@ -75,8 +75,6 @@ const hentSelftester = async apperSomSkalMonitoreres => {
     return selftester;
 };
 
-
-
 const hentSelftestResultatForIawebSolr = async (miljø) => {
     const url = urlTilApp('iawebsolr', miljø);
 
@@ -89,14 +87,14 @@ const hentSelftestResultatForIawebSolr = async (miljø) => {
     } catch (error) {
         console.log('error', error);
         redirectResponse = error.response;
-        if (!redirectResponse.status !== 302) {
+        if (!redirectResponse || !redirectResponse.status !== 302) {
             throw error;
         }
     }
 
     console.log('redirectResponse', redirectResponse);
 
-    await axios.get(url, {
+    return await axios.get(url, {
         withCredentials: true,
         headers:
             {
@@ -106,4 +104,4 @@ const hentSelftestResultatForIawebSolr = async (miljø) => {
 
 };
 
-module.exports = { hentSelftester };
+module.exports = { hentSelftester, hentSelftestResultatForIawebSolr };

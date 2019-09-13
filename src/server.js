@@ -1,5 +1,5 @@
 const { oppdaterMetrikker } = require('./metrikker');
-const { hentSelftester } = require('./selftester');
+const { hentSelftester, hentSelftestResultatForIawebSolr } = require('./selftester');
 const express = require('express');
 const app = express();
 const apiMetrics = require('prometheus-api-metrics');
@@ -19,6 +19,12 @@ const startServer = () => {
     app.get(`${BASE_PATH}/internal/selftester`, (req, res) => {
         hentSelftester(apperSomSkalMonitoreres).then(metrikker => {
             res.send(metrikker);
+        });
+    });
+
+    app.get(`${BASE_PATH}/internal/test`, (req, res) => {
+        hentSelftestResultatForIawebSolr('q1').then(resultat => {
+            res.send(resultat);
         });
     });
 
