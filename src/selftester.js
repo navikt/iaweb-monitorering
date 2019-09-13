@@ -85,26 +85,17 @@ const hentSelftestResultatForIawebSolr = async miljø => {
             maxRedirects: 0,
         });
     } catch (error) {
-        console.log('error', error);
         redirectResponse = error.response;
         if (!redirectResponse || redirectResponse.status !== 302) {
-            console.log(
-                'kaster error videre. redirectResponse=' + CircularJSON.stringify(redirectResponse)
-            );
-            console.log(
-                'redirectResponse-setcookie1',
-                CircularJSON.stringify(redirectResponse.headers['set-cookie'])
-            );
             throw error;
         }
     }
-    console.log('redirectResponse', redirectResponse);
-    console.log('redirectResponse-setcookie2', redirectResponse.headers['set-cookie']);
     const iawebCookieStringUtenDomain = (redirectResponse.headers['set-cookie'] + '')
         .split(',')
         .filter(cookie => cookie.includes('JSESSIONID-iaweb='))[0];
     const iawebCookie = iawebCookieStringUtenDomain + "; domain=.app-q1.adeo.no";
-    console.log('iawebCookie', iawebCookie);
+
+    console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
     return await axios.get(redirectResponse.headers.location, {
         withCredentials: true,
