@@ -1,8 +1,6 @@
 const { urlTilApp } = require('./utils');
 const { api } = require('./api');
-const sleep = milliseconds => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
-};
+const MAKS_ANTALL_FORSØK = 10;
 
 const hentSelftestResultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
@@ -17,41 +15,40 @@ const hentSelftestResultatForIawebSolr = async miljø => {
 
     console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
 
-    console.log('sleep start...');
-    await sleep(3000);
-    console.log('sleep end');
-
-    try {
-        return await api.get(redirectResponse.headers.location, {
-            withCredentials: true,
-            headers: {
-                maxRedirects: 0,
-                Cookie: iawebCookie,
-            },
-        });
-    } catch (error) {
-        if (error.message.includes('Max redirects exceeded.')) {
-            console.log('fikk max redirects, prøver igjen...');
-            return await hentSelftestResultatForIawebSolr(miljø);
-        } else {
-            throw error;
+    for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
+        const res = await utførKallMedCookie(
+            redirectResponse.headers.location,
+            hentIawebCookie(redirectResponse)
+        );
+        if (res.status === 200) {
+            console.log('Antall forsøk mot iaweb før success: ' + i);
+            return res;
         }
     }
+
+    throw { message: 'Selftest for iawebsolr feilet. Antall forsøk: ' + MAKS_ANTALL_FORSØK };
 };
 
-const hentRedirectRespons = async () => {
-    let redirectResponse;
-
-    try {
-        await api.get(url, {
+const utførKallMedCookie = async (url, cookie) => {
+    return await api.get(url, {
+        withCredentials: true,
+        headers: {
             maxRedirects: 0,
-        });
-    } catch (error) {
-        redirectResponse = error.response;
-        if (!redirectResponse || redirectResponse.status !== 302) {
-            throw error;
+            Cookie: cookie,
+        },
+    });
+};
+
+const hentIawebCookie = response => {
+    const setCookieHeader = response.headers['set-cookie'];
+    if (setCookieHeader instanceof Array) {
+        return setCookieHeader.filter(cookie => cookie.includes('JSESSIONID-iaweb='))[0];
+    } else {
+        if (setCookieHeader.includes('JSESSIONID-iaweb=')) {
+            return setCookieHeader;
         }
     }
+    throw { message: 'Fant ikke riktig cookie' };
 };
 
 module.exports = { hentSelftestResultatForIawebSolr };
