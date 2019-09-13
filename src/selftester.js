@@ -100,11 +100,16 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     }
     console.log('redirectResponse', redirectResponse);
     console.log('redirectResponse-setcookie2', redirectResponse.headers['set-cookie']);
+    const iawebCookieUtenDomain = redirectResponse.headers['set-cookie']
+        .split(',')
+        .filter(cookie => cookie.includes('JSESSIONID-iaweb='))[0];
+    const iawebCookie = iawebCookieUtenDomain + "; domain=.app-q1.adeo.no";
+    console.log('iawebCookie', iawebCookie);
 
     return await axios.get(redirectResponse.headers.location, {
         withCredentials: true,
         headers: {
-            Cookie: redirectResponse.headers['set-cookie'],
+            Cookie: iawebCookie,
         },
     });
 };
