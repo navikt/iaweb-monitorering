@@ -100,6 +100,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     return await axios.get(redirectResponse.headers.location, {
         withCredentials: true,
         headers: {
+            maxRedirects: 0,
             Cookie: iawebCookie,
         },
     });
