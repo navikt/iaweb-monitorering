@@ -88,12 +88,13 @@ const hentSelftestResultatForIawebSolr = async (miljø) => {
         console.log('error', error);
         redirectResponse = error.response;
         if (!redirectResponse || !redirectResponse.status !== 302) {
-            console.log('kaster error videre. redirectResponse=' + redirectResponse);
+            console.log('kaster error videre. redirectResponse=' + JSON.stringify(redirectResponse));
+            console.log('redirectResponse-setcookie1', redirectResponse.headers['set-cookie']);
             throw error;
         }
     }
     console.log('redirectResponse', redirectResponse);
-    console.log('redirectResponse-setcookie', redirectResponse.headers['set-cookie']);
+    console.log('redirectResponse-setcookie2', redirectResponse.headers['set-cookie']);
 
     return await axios.get(url, {
         withCredentials: true,
