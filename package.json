@@ -11,6 +11,7 @@
     "circular-json": "^0.5.9",
     "express": "^4.17.1",
     "prom-client": "^11.5.3",
-    "prometheus-api-metrics": "^2.2.3"
+    "prometheus-api-metrics": "^2.2.3",
+    "sleep": "^6.1.0"
   }
 }
