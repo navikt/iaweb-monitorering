@@ -5,6 +5,34 @@ const MAKS_ANTALL_FORSØK = 5;
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 };
+
+const tolkResultatForIawebSolr = selftestResultat => {
+    // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
+
+    const iawebSolrOK = 'UNI_SOLR_OK';
+    const iawebSolrIkkeOK = 'UNI_SOLR_CRITICAL';
+
+    if (selftestResultat.data.includes(iawebSolrOK)) {
+        return {
+            status: selftestResultat.status,
+            data: iawebSolrOK,
+            url: selftestResultat.url,
+        };
+    } else if (selftestResultat.data.includes(iawebSolrIkkeOK)) {
+        return {
+            status: iawebSolrIkkeOK,
+            data: iawebSolrIkkeOK,
+            url: selftestResultat.url,
+        };
+    } else {
+        return {
+            status: 'ikke OK',
+            data: '',
+            url: selftestResultat.url,
+        };
+    }
+};
+
 const hentSelftestResultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
 
@@ -27,7 +55,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
             );
             if (res.status === 200) {
                 console.log('Antall forsøk mot iaweb før success: ' + (i + 1));
-                return res;
+                return tolkResultatForIawebSolr(res);
             }
         } catch (ignored) {}
     }

@@ -1,41 +1,15 @@
 const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
 const { api } = require('./api');
 
-const tolkResultatForIawebSolr = selftestResultat => {
-    // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
-
-    const iawebSolrOK = 'UNI_SOLR_OK';
-    const iawebSolrIkkeOK = 'UNI_SOLR_CRITICAL';
-
-    if (selftestResultat.data.includes(iawebSolrOK)) {
-        return {
-            status: selftestResultat.status,
-            data: iawebSolrOK,
-            url: selftestResultat.url,
-        };
-    } else if (selftestResultat.data.includes(iawebSolrIkkeOK)) {
-        return {
-            status: iawebSolrIkkeOK,
-            data: iawebSolrIkkeOK,
-            url: selftestResultat.url,
-        };
-    } else {
-        return {
-            status: 'ikke OK',
-            data: '',
-            url: selftestResultat.url,
-        };
-    }
-};
 const hentSelftestResultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
+        if (app === 'iawebsolr') {
+            return hentSelftestResultatForIawebSolr(miljø);
+        }
         const selftestResultat = await api.get(url, {
             withCredentials: true,
         });
-        if (app === 'iawebsolr') {
-            return tolkResultatForIawebSolr(selftestResultat);
-        }
         return {
             status: selftestResultat.status,
             data: selftestResultat.data,
