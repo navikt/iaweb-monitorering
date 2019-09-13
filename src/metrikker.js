@@ -55,6 +55,37 @@ const tolkResultatForIawebSolr = selftestResultat => {
     }
 };
 
+const hentSelftestResultatForIawebSolr = async (miljø) => {
+    const url = urlTilApp('iawebsolr', miljø);
+
+    let redirectResponse;
+
+    try {
+        await axios.get(url, {
+            maxRedirects: 0
+        });
+    } catch (error) {
+        console.log('error', error);
+        redirectResponse = error.response;
+        if (!redirectResponse.status !== 302) {
+            throw error;
+        }
+    }
+
+    console.log('redirectResponse', redirectResponse);
+
+    await axios.get(url, {
+        withCredentials: true,
+        headers:
+            {
+                'Cookie': 'cookie1=test'
+            }
+    });
+
+};
+
+hentSelftestResultatForIawebSolr('q1');
+
 const hentSelftestResultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
