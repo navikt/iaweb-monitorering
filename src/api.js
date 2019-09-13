@@ -7,7 +7,7 @@ const initializeApi = () => {
     api.interceptors.response.use(
         response => response,
         error => {
-            if (error.response.status === 302) {
+            if (!!error.response && error.response.status === 302) {
                 return error.response;
             } else {
                 return Promise.reject(error);
