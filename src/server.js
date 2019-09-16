@@ -1,3 +1,5 @@
+process.env.DEBUG = 'axios';
+require('axios-debug-log');
 const { oppdaterMetrikker } = require('./metrikker');
 const { hentSelftester } = require('./selftester');
 const express = require('express');
