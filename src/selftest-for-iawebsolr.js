@@ -55,7 +55,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     }
 
     const iawebSessionIdCookie = hentIawebCookie(redirectResponse);
-    const urlManRedirectesTil = redirectResponse.headers;
+    const urlManRedirectesTil = redirectResponse.headers.location;
 
     if (!iawebSessionIdCookie || !urlManRedirectesTil) {
         return {
