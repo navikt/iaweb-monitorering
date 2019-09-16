@@ -50,16 +50,23 @@ const hentSelftestresultatForIawebSolr = async miljø => {
     }
 
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
-        sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
+        await sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
         try {
             const res = await utførKallMedCookie(urlManRedirectesTil, iawebSessionIdCookie);
             if (res.status === 200) {
+                if (i > 0) {
+                    console.log(
+                        `Antall forsøk før suksess på selftest for iawebsolr i ${miljø}: ${i + 1}`
+                    );
+                }
                 return tolkResultatForIawebSolr(res);
             }
         } catch (ignored) {}
     }
 
-    throw { message: 'Selftest for iawebsolr feilet. Antall forsøk: ' + MAKS_ANTALL_FORSØK };
+    const feilmelding = `Selftest for iawebsolr feilet i ${miljø}. Antall forsøk: ${MAKS_ANTALL_FORSØK}`;
+    console.warn(feilmelding);
+    return selftestResponse('kall feilet', feilmelding, url);
 };
 
 const utførKallMedCookie = async (url, cookie) => {
