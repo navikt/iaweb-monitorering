@@ -1,6 +1,6 @@
 const { urlTilApp, selftestResponse } = require('./utils');
 const { api } = require('./api');
-const MAKS_ANTALL_FORSØK = 5;
+const MAKS_ANTALL_FORSØK = 10;
 
 const sleep = milliseconds => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
