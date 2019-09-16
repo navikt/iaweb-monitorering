@@ -49,26 +49,30 @@ const hentSelftestResultatForIawebSolr = async miljø => {
         };
     }
 
-    if (!redirectResponse.headers) {
+    if (redirectResponse.status === 200) {
+        // I miljø T1 blir man ikke redirected.
+        return tolkResultatForIawebSolr(redirectResponse);
+    }
+
+    const iawebSessionIdCookie = hentIawebCookie(redirectResponse);
+    const urlManRedirectesTil = redirectResponse.headers;
+
+    if (!iawebSessionIdCookie || !urlManRedirectesTil) {
         return {
             status: 'kall feilet',
-            data: 'headers er undefined',
+            data: 'Respons fra selftest til iawebinternal mangler headers',
             url: url,
         };
     }
 
-    const iawebCookie = (redirectResponse.headers['set-cookie'] + '')
-        .split(',')
-        .filter(cookie => cookie.includes('JSESSIONID-iaweb='))[0];
-
-    console.log('Kaller url=' + redirectResponse.headers.location + ' med cookie=' + iawebCookie);
+    console.log('Kaller url=' + urlManRedirectesTil + ' med cookie=' + iawebSessionIdCookie);
 
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
         sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
         try {
             const res = await utførKallMedCookie(
-                redirectResponse.headers.location,
-                hentIawebCookie(redirectResponse)
+                urlManRedirectesTil,
+                iawebSessionIdCookie
             );
             if (res.status === 200) {
                 console.log('Antall forsøk mot iaweb før success: ' + (i + 1));
