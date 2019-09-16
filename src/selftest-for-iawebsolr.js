@@ -36,9 +36,18 @@ const tolkResultatForIawebSolr = selftestResultat => {
 const hentSelftestResultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
 
-    const redirectResponse = await api.get(url, {
-        maxRedirects: 0,
-    });
+    let redirectResponse;
+    try {
+        redirectResponse = await api.get(url, {
+            maxRedirects: 0,
+        });
+    } catch (error) {
+        return {
+            status: 'kall feilet',
+            data: error.message,
+            url: url,
+        };
+    }
 
     const iawebCookie = (redirectResponse.headers['set-cookie'] + '')
         .split(',')
