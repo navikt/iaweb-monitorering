@@ -49,6 +49,14 @@ const hentSelftestResultatForIawebSolr = async miljø => {
         };
     }
 
+    if (!redirectResponse.headers) {
+        return {
+            status: 'kall feilet',
+            data: 'headers er undefined',
+            url: url,
+        };
+    }
+
     const iawebCookie = (redirectResponse.headers['set-cookie'] + '')
         .split(',')
         .filter(cookie => cookie.includes('JSESSIONID-iaweb='))[0];
