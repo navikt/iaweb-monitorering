@@ -1,0 +1,23 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Alert"
+metadata:
+  name: iaweb-alerts
+  labels:
+    team: teamtag
+spec:
+  receivers:
+    slack:
+      channel: 'tag-notifications'
+      prependText: '<!here> | '
+  alerts:
+    - alert: applikasjon nede
+      expr: min_over_time(iawebinternal_p{app="iaweb-monitorering"}[5m]) < 0.5
+      for: 2m
+      description: "iawebinternal er nede i prod"
+      action: "sjekk https://iaweb-monitorering.nais.adeo.no/iaweb-monitorering/internal/selftester for mer info"
+
+    - alert: applikasjon nede
+      expr: min_over_time(iawebsolr_p{app="iaweb-monitorering"}[5m]) < 0.5
+      for: 2m
+      description: "iawebsolr er nede i prod"
+      action: "sjekk https://iaweb-monitorering.nais.adeo.no/iaweb-monitorering/internal/selftester for mer info"
