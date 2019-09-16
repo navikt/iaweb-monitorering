@@ -1,4 +1,4 @@
-const { urlTilApp } = require('./utils');
+const { urlTilApp, selftestResponse } = require('./utils');
 const { api } = require('./api');
 const MAKS_ANTALL_FORSØK = 5;
 
@@ -13,23 +13,11 @@ const tolkResultatForIawebSolr = selftestresultat => {
     const iawebSolrIkkeOK = 'UNI_SOLR_CRITICAL';
 
     if (selftestresultat.data.includes(iawebSolrOK)) {
-        return {
-            status: selftestresultat.status,
-            data: iawebSolrOK,
-            url: selftestresultat.url,
-        };
+        return selftestResponse(selftestresultat.status, iawebSolrOK, selftestresultat.url);
     } else if (selftestresultat.data.includes(iawebSolrIkkeOK)) {
-        return {
-            status: iawebSolrIkkeOK,
-            data: iawebSolrIkkeOK,
-            url: selftestresultat.url,
-        };
+        selftestResponse(iawebSolrIkkeOK, iawebSolrIkkeOK, selftestresultat.url);
     } else {
-        return {
-            status: 'ikke OK',
-            data: '',
-            url: selftestresultat.url,
-        };
+        selftestResponse('ikke OK', '', selftestresultat.url);
     }
 };
 
@@ -42,11 +30,7 @@ const hentSelftestresultatForIawebSolr = async miljø => {
             maxRedirects: 0,
         });
     } catch (error) {
-        return {
-            status: 'kall feilet',
-            data: error.message,
-            url: url,
-        };
+        return selftestResponse('kall feilet', error.message, url);
     }
 
     if (redirectResponse.status === 200) {
@@ -58,21 +42,18 @@ const hentSelftestresultatForIawebSolr = async miljø => {
     const urlManRedirectesTil = redirectResponse.headers.location;
 
     if (!iawebSessionIdCookie || !urlManRedirectesTil) {
-        return {
-            status: 'kall feilet',
-            data: 'Respons fra selftest til iawebinternal mangler headers',
-            url: url,
-        };
+        return selftestResponse(
+            'kall feilet',
+            'Respons fra selftest til iawebinternal mangler headers',
+            url
+        );
     }
-
-    console.log('Kaller url=' + urlManRedirectesTil + ' med cookie=' + iawebSessionIdCookie);
 
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
         sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
         try {
             const res = await utførKallMedCookie(urlManRedirectesTil, iawebSessionIdCookie);
             if (res.status === 200) {
-                console.log('Antall forsøk mot iaweb før success: ' + (i + 1));
                 return tolkResultatForIawebSolr(res);
             }
         } catch (ignored) {}

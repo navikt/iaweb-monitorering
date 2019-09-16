@@ -1,4 +1,3 @@
-process.env.DEBUG = 'axios';
 const { oppdaterMetrikker } = require('./metrikker');
 const { hentSelftestresultatForIawebSolr } = require('./selftest-for-iawebsolr');
 const { hentSelftester } = require('./selftester');

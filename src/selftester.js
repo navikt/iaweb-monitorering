@@ -1,4 +1,4 @@
-const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
+const { lagAppnavnMedMiljø, miljøer, urlTilApp, selftestResponse } = require('./utils');
 const { api } = require('./api');
 const { hentSelftestresultatForIawebSolr } = require('./selftest-for-iawebsolr');
 
@@ -11,17 +11,9 @@ const hentSelftestresultat = async (app, miljø) => {
         const selftestresultat = await api.get(url, {
             withCredentials: true,
         });
-        return {
-            status: selftestresultat.status,
-            data: selftestresultat.data,
-            url: url,
-        };
+        return selftestResponse(selftestresultat.status, selftestresultat.data, url);
     } catch (error) {
-        return {
-            status: 'kall feilet',
-            data: error.message,
-            url: url,
-        };
+        return selftestResponse('kall feilet', error.message, url);
     }
 };
 

@@ -1,6 +1,14 @@
 const lagAppnavnMedMiljø = (app, miljø) => `${app}_${miljø}`;
 const miljøer = ['t2', 't1', 'q1', 'q0', 'p'];
 
+const selftestResponse = (status, data, url) => {
+    return {
+        status,
+        data,
+        url,
+    };
+};
+
 const hentMiljøUrlStreng = miljø => {
     if (miljø === 'p') {
         return '';
@@ -21,4 +29,4 @@ const urlTilApp = (app, miljø) => {
     }
 };
 
-module.exports = { lagAppnavnMedMiljø, miljøer, urlTilApp };
+module.exports = { lagAppnavnMedMiljø, miljøer, urlTilApp, selftestResponse };

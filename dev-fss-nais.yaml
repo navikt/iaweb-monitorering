@@ -6,7 +6,7 @@ metadata:
     labels:
         team: teamtag
 spec:
-    image: navikt/iaweb-monitorering:e73ea1e5b8a62ee29b16d34b6dfe3108d18733e8
+    image: navikt/iaweb-monitorering:{{version}}
     team: teamtag
     port: 8080
     ingresses:
