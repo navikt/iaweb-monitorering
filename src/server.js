@@ -1,10 +1,8 @@
 const { oppdaterMetrikker } = require('./metrikker');
-const { hentSelftestresultatForIawebSolr } = require('./selftest-for-iawebsolr');
 const { hentSelftester } = require('./selftester');
 const express = require('express');
 const app = express();
 const apiMetrics = require('prometheus-api-metrics');
-const CircularJSON = require('circular-json');
 
 const cluster = process.env.NAIS_CLUSTER_NAME;
 const BASE_PATH = '/iaweb-monitorering';
@@ -22,12 +20,6 @@ const startServer = () => {
     app.get(`${BASE_PATH}/internal/selftester`, (req, res) => {
         hentSelftester(apperSomSkalMonitoreres).then(metrikker => {
             res.send(metrikker);
-        });
-    });
-
-    app.get(`${BASE_PATH}/internal/test`, (req, res) => {
-        hentSelftestresultatForIawebSolr('q1').then(resultat => {
-            res.send(CircularJSON.stringify(resultat));
         });
     });
 
