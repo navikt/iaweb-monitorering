@@ -1,6 +1,6 @@
 const { urlTilApp, selftestResponse } = require('./utils');
 const { api } = require('./api');
-const MAKS_ANTALL_FORSØK = 5;
+const MAKS_ANTALL_FORSØK = 10;
 
 const sleep = milliseconds => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -64,7 +64,7 @@ const hentSelftestresultatForIawebSolr = async miljø => {
         } catch (ignored) {}
     }
 
-    const feilmelding = 'Selftest for iawebsolr feilet. Antall forsøk: ' + MAKS_ANTALL_FORSØK;
+    const feilmelding = `Selftest for iawebsolr feilet i ${miljø}. Antall forsøk: ${MAKS_ANTALL_FORSØK}`;
     console.warn(feilmelding);
     return selftestResponse('kall feilet', feilmelding, url);
 };
