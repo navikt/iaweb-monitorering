@@ -1,6 +1,6 @@
 const { urlTilApp, selftestResponse } = require('./utils');
 const { api } = require('./api');
-const MAKS_ANTALL_FORSØK = 10;
+const MAKS_ANTALL_FORSØK = 5;
 
 const sleep = milliseconds => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -50,7 +50,7 @@ const hentSelftestresultatForIawebSolr = async miljø => {
     }
 
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
-        sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
+        await sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
         try {
             const res = await utførKallMedCookie(urlManRedirectesTil, iawebSessionIdCookie);
             if (res.status === 200) {
