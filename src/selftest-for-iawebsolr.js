@@ -6,34 +6,34 @@ const sleep = milliseconds => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 };
 
-const tolkResultatForIawebSolr = selftestResultat => {
+const tolkResultatForIawebSolr = selftestresultat => {
     // iawebsolr eksponerer ikke egen selftest, men man kan lese dens status ut i fra html-selftesten til iawebinternal.
 
     const iawebSolrOK = 'UNI_SOLR_OK';
     const iawebSolrIkkeOK = 'UNI_SOLR_CRITICAL';
 
-    if (selftestResultat.data.includes(iawebSolrOK)) {
+    if (selftestresultat.data.includes(iawebSolrOK)) {
         return {
-            status: selftestResultat.status,
+            status: selftestresultat.status,
             data: iawebSolrOK,
-            url: selftestResultat.url,
+            url: selftestresultat.url,
         };
-    } else if (selftestResultat.data.includes(iawebSolrIkkeOK)) {
+    } else if (selftestresultat.data.includes(iawebSolrIkkeOK)) {
         return {
             status: iawebSolrIkkeOK,
             data: iawebSolrIkkeOK,
-            url: selftestResultat.url,
+            url: selftestresultat.url,
         };
     } else {
         return {
             status: 'ikke OK',
             data: '',
-            url: selftestResultat.url,
+            url: selftestresultat.url,
         };
     }
 };
 
-const hentSelftestResultatForIawebSolr = async miljø => {
+const hentSelftestresultatForIawebSolr = async miljø => {
     const url = urlTilApp('iawebsolr', miljø);
 
     let redirectResponse;
@@ -103,4 +103,4 @@ const hentIawebCookie = response => {
     throw { message: 'Fant ikke riktig cookie' };
 };
 
-module.exports = { hentSelftestResultatForIawebSolr };
+module.exports = { hentSelftestresultatForIawebSolr };

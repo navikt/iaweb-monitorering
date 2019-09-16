@@ -1,19 +1,19 @@
 const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
 const { api } = require('./api');
-const { hentSelftestResultatForIawebSolr } = require('./selftest-for-iawebsolr');
+const { hentSelftestresultatForIawebSolr } = require('./selftest-for-iawebsolr');
 
-const hentSelftestResultat = async (app, miljø) => {
+const hentSelftestresultat = async (app, miljø) => {
     const url = urlTilApp(app, miljø);
     try {
         if (app === 'iawebsolr') {
-            return hentSelftestResultatForIawebSolr(miljø);
+            return hentSelftestresultatForIawebSolr(miljø);
         }
-        const selftestResultat = await api.get(url, {
+        const selftestresultat = await api.get(url, {
             withCredentials: true,
         });
         return {
-            status: selftestResultat.status,
-            data: selftestResultat.data,
+            status: selftestresultat.status,
+            data: selftestresultat.data,
             url: url,
         };
     } catch (error) {
@@ -42,7 +42,7 @@ const hentSelftester = async apperSomSkalMonitoreres => {
     await Promise.all(
         apperOgMiljøer.map(async ({ app, miljø }) => {
             const appnavnMedMiljø = lagAppnavnMedMiljø(app, miljø);
-            selftester[appnavnMedMiljø] = await hentSelftestResultat(app, miljø);
+            selftester[appnavnMedMiljø] = await hentSelftestresultat(app, miljø);
         })
     );
 

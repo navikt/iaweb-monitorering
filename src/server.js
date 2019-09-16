@@ -1,6 +1,6 @@
 process.env.DEBUG = 'axios';
 const { oppdaterMetrikker } = require('./metrikker');
-const { hentSelftestResultatForIawebSolr } = require('./selftest-for-iawebsolr');
+const { hentSelftestresultatForIawebSolr } = require('./selftest-for-iawebsolr');
 const { hentSelftester } = require('./selftester');
 const express = require('express');
 const app = express();
@@ -27,7 +27,7 @@ const startServer = () => {
     });
 
     app.get(`${BASE_PATH}/internal/test`, (req, res) => {
-        hentSelftestResultatForIawebSolr('q1').then(resultat => {
+        hentSelftestresultatForIawebSolr('q1').then(resultat => {
             res.send(CircularJSON.stringify(resultat));
         });
     });

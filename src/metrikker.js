@@ -19,9 +19,9 @@ const gauges = initierGauges();
 
 const oppdaterMetrikker = (apperSomSkalMonitoreres, antallMillisekunderMellomHverOppdatering) =>
     setInterval(() => {
-        hentSelftester(apperSomSkalMonitoreres).then(selftestResultater => {
-            Object.keys(selftestResultater).forEach(app => {
-                gauges[app].set(selftestResultater[app].status === 200 ? 1 : 0);
+        hentSelftester(apperSomSkalMonitoreres).then(selftestresultater => {
+            Object.keys(selftestresultater).forEach(app => {
+                gauges[app].set(selftestresultater[app].status === 200 ? 1 : 0);
             });
         });
     }, antallMillisekunderMellomHverOppdatering);
