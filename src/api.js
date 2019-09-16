@@ -1,4 +1,3 @@
-require('axios-debug-log');
 const axios = require('axios');
 
 const initializeApi = () => {
