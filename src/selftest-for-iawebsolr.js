@@ -2,8 +2,8 @@ const { urlTilApp } = require('./utils');
 const { api } = require('./api');
 const MAKS_ANTALL_FORSØK = 5;
 
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
+const sleep = milliseconds => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 };
 
 const tolkResultatForIawebSolr = selftestResultat => {
@@ -70,10 +70,7 @@ const hentSelftestResultatForIawebSolr = async miljø => {
     for (let i = 0; i < MAKS_ANTALL_FORSØK; i++) {
         sleep(1000); // IA-web trenger litt tid for å lagre sesjonen
         try {
-            const res = await utførKallMedCookie(
-                urlManRedirectesTil,
-                iawebSessionIdCookie
-            );
+            const res = await utførKallMedCookie(urlManRedirectesTil, iawebSessionIdCookie);
             if (res.status === 200) {
                 console.log('Antall forsøk mot iaweb før success: ' + (i + 1));
                 return tolkResultatForIawebSolr(res);

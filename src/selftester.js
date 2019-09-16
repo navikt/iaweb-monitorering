@@ -1,5 +1,5 @@
 const { lagAppnavnMedMiljø, miljøer, urlTilApp } = require('./utils');
-const { api } = require('./api');
+const { api } = require('./api');
 const { hentSelftestResultatForIawebSolr } = require('./selftest-for-iawebsolr');
 
 const hentSelftestResultat = async (app, miljø) => {

@@ -14,7 +14,8 @@ const PORT = 8080;
 const erIFSS = cluster ? cluster.toLowerCase().includes('fss') : true;
 const apperSomSkalMonitoreres = erIFSS ? ['iawebinternal', 'iawebsolr'] : ['iawebnav'];
 
-// oppdaterMetrikker(apperSomSkalMonitoreres, 10000);
+oppdaterMetrikker(apperSomSkalMonitoreres, 60 * 1000);
+
 const startServer = () => {
     app.get(`${BASE_PATH}/internal/isAlive`, (req, res) => res.sendStatus(200));
     app.get(`${BASE_PATH}/internal/isReady`, (req, res) => res.sendStatus(200));
