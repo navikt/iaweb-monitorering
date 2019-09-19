@@ -17,7 +17,7 @@ spec:
       action: "sjekk https://iaweb-monitorering.nais.adeo.no/iaweb-monitorering/internal/selftester for mer info"
 
     - alert: applikasjon nede
-      expr: min_over_time(iawebsolr_p{app="iaweb-monitorering"}[2m]) < 0.5
+      expr: max_over_time(iawebsolr_p{app="iaweb-monitorering"}[2m]) < 0.5 # bruker max_over_time fordi denne selftesten er ustabil
       for: 2m
       description: "iawebsolr er nede i prod"
       action: "sjekk https://iaweb-monitorering.nais.adeo.no/iaweb-monitorering/internal/selftester for mer info"
