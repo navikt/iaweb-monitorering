@@ -1,69 +1,79 @@
-defaults: &defaults
-  docker:
-    - image: circleci/node
-
 version: 2.1
+orbs:
+  nais: navikt/nais-deployment@dev:master
+
 jobs:
   bygg:
-    <<: *defaults
+    docker:
+      - image: circleci/node:12.4.0-browsers
     steps:
       - checkout
-      - setup_remote_docker
-      - run:
-          name: Bygg Docker image
-          command: docker build -t "navikt/iaweb-monitorering:$CIRCLE_SHA1" .
-      - run:
-          name: Push Docker image
-          command: |
-            echo $DOCKER_PASSWORD | docker login --username $DOCKER_LOGIN --password-stdin
-            docker push "navikt/iaweb-monitorering:$CIRCLE_SHA1"
-            echo "Docker image: $CIRCLE_SHA1"
+      - nais/docker:
+          image: navikt/iaweb-monitorering
 
   deploy-til-dev-sbs:
     docker:
-      - image: 'navikt/deployment-cli:v0.3.0'
-    steps:
-      - deploy:
-          cluster: "dev-sbs"
-          nais-yaml: "dev-sbs-nais.yaml"
-
-  deploy-til-prod-sbs:
-    docker:
-      - image: 'navikt/deployment-cli:v0.3.0'
-    steps:
-      - deploy:
-          cluster: "prod-sbs"
-          nais-yaml: "prod-sbs-nais.yaml"
-
-  deploy-til-dev-fss:
-    docker:
-      - image: 'navikt/deployment-cli:v0.3.0'
-    steps:
-      - deploy:
-          cluster: "dev-fss"
-          nais-yaml: "dev-fss-nais.yaml"
-
-  deploy-til-prod-fss:
-    docker:
-      - image: 'navikt/deployment-cli:v0.3.0'
-    steps:
-      - deploy:
-          cluster: "prod-fss"
-          nais-yaml: "prod-fss-nais.yaml"          
-
-commands:
-  deploy:
-    description: Deploy til et gitt miljø
-    parameters:
-      cluster:
-        type: string
-      nais-yaml:
-        type: string
+      - image: navikt/deployment-cli:0.4.2
     steps:
       - checkout
       - run:
-          name: Deploy til << parameters.cluster >>
-          command: deployment-cli deploy create --cluster=<< parameters.cluster >> --repository=navikt/iaweb-monitorering --team=teamtag --resource=<< parameters.nais-yaml >> --version=$CIRCLE_SHA1 --ref=$CIRCLE_BRANCH
+          name: Unpack Private Key
+          command: echo $GITHUB_PRIVATE_KEY | base64 -d > .circleci/github.key.pem
+      - nais/deploy-with-gh-app:
+          repo: navikt/iaweb-monitorering
+          image: navikt/iaweb-monitorering
+          github-app-id: 43789
+          nais-template: dev-sbs-nais.yaml
+          environment: dev-sbs
+          team: teamtag
+
+  deploy-til-dev-fss:
+    docker:
+      - image: navikt/deployment-cli:0.4.2
+    steps:
+      - checkout
+      - run:
+          name: Unpack Private Key
+          command: echo $GITHUB_PRIVATE_KEY | base64 -d > .circleci/github.key.pem
+      - nais/deploy-with-gh-app:
+          repo: navikt/iaweb-monitorering
+          image: navikt/iaweb-monitorering
+          github-app-id: 43789
+          nais-template: dev-fss-nais.yaml
+          environment: dev-fss
+          team: teamtag
+
+  deploy-til-prod-sbs:
+    docker:
+      - image: navikt/deployment-cli:0.4.2
+    steps:
+      - checkout
+      - run:
+          name: Unpack Private Key
+          command: echo $GITHUB_PRIVATE_KEY | base64 -d > .circleci/github.key.pem
+      - nais/deploy-with-gh-app:
+          repo: navikt/iaweb-monitorering
+          image: navikt/iaweb-monitorering
+          github-app-id: 43789
+          nais-template: prod-sbs-nais.yaml
+          environment: prod-sbs
+          team: teamtag
+
+  deploy-til-prod-fss:
+    docker:
+      - image: navikt/deployment-cli:0.4.2
+    steps:
+      - checkout
+      - run:
+          name: Unpack Private Key
+          command: echo $GITHUB_PRIVATE_KEY | base64 -d > .circleci/github.key.pem
+      - nais/deploy-with-gh-app:
+          repo: navikt/iaweb-monitorering
+          image: navikt/iaweb-monitorering
+          github-app-id: 43789
+          nais-template: prod-fss-nais.yaml
+          environment: prod-fss
+          team: teamtag
 
 workflows:
   version: 2.1
@@ -72,6 +82,7 @@ workflows:
       - bygg:
           context: NAIS deployment
       - deploy-til-dev-sbs:
+          context: tag-ci
           requires:
             - bygg
           filters:
@@ -87,6 +98,7 @@ workflows:
               only:
                 - master
       - deploy-til-prod-sbs:
+          context: tag-ci
           requires:
             - godkjenn-til-prod-sbs
           filters:
@@ -94,6 +106,7 @@ workflows:
               only:
                 - master
       - deploy-til-dev-fss:
+          context: tag-ci
           requires:
             - bygg
           filters:
@@ -109,6 +122,7 @@ workflows:
               only:
                 - master
       - deploy-til-prod-fss:
+          context: tag-ci
           requires:
             - godkjenn-til-prod-fss
           filters:
