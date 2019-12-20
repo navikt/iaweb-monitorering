@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm i --frozen-lockfile
+RUN npm ci
 COPY src/ src/
 
 EXPOSE 8080
