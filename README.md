@@ -16,7 +16,8 @@ Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 
 * Thomas Dufourd, thomas.dufourd@nav.no
 * Lars Andreas Tveiten, lars.andreas.van.woensel.kooy.tveiten@nav.no
+* Malaz Alkoj, malaz.alkoj@nav.no
 
 ## For NAV-ansatte
 
-Interne henvendelser kan sendes via Slack i kanalen #tag-teamia.
+Interne henvendelser kan sendes via Slack i kanalen #arbeidsgiver-teamia.
