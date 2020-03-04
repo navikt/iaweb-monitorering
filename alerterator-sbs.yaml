@@ -3,11 +3,11 @@ kind: "Alert"
 metadata:
   name: iaweb-alerts
   labels:
-    team: teamtag
+    team: arbeidsgiver
 spec:
   receivers:
     slack:
-      channel: 'tag-notifications'
+      channel: 'arbeidsgiver-teamia-utvikling'
       prependText: '<!here> | '
   alerts:
     - alert: applikasjon nede

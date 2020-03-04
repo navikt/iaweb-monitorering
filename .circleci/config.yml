@@ -25,7 +25,7 @@ jobs:
           github-app-id: 43789
           nais-template: dev-sbs-nais.yaml
           environment: dev-sbs
-          team: teamtag
+          team: arbeidsgiver
 
   deploy-til-dev-fss:
     docker:
@@ -41,7 +41,7 @@ jobs:
           github-app-id: 43789
           nais-template: dev-fss-nais.yaml
           environment: dev-fss
-          team: teamtag
+          team: arbeidsgiver
 
   deploy-til-prod-sbs:
     docker:
@@ -57,7 +57,7 @@ jobs:
           github-app-id: 43789
           nais-template: prod-sbs-nais.yaml
           environment: prod-sbs
-          team: teamtag
+          team: arbeidsgiver
 
   deploy-til-prod-fss:
     docker:
@@ -73,7 +73,7 @@ jobs:
           github-app-id: 43789
           nais-template: prod-fss-nais.yaml
           environment: prod-fss
-          team: teamtag
+          team: arbeidsgiver
 
 workflows:
   version: 2.1
