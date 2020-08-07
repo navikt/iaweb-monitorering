@@ -4,10 +4,10 @@ metadata:
     name: iaweb-monitorering
     namespace: default
     labels:
-        team: {{team}}
+        team: arbeidsgiver
 spec:
     image: {{version}}
-    team: {{team}}
+    team: arbeidsgiver
     port: 8080
     ingresses:
         - https://iaweb-monitorering.nais.preprod.local/iaweb-monitorering
