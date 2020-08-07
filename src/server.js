@@ -12,7 +12,11 @@ const erIFSS = cluster ? cluster.toLowerCase().includes('fss') : true;
 const apperSomSkalMonitoreres = erIFSS
     ? ['iawebinternal', 'iawebsolr']
     : [
-          /* 'iawebnav' iawebnav er skrudd av inntil videre. Spør i #arbeidsgiver-teamia for mer info */
+          /*
+          'iawebnav'
+          iawebnav er skrudd av inntil videre. Spør i #arbeidsgiver-teamia for mer info.
+          Hvis den skurs på igjen må det legges til deploy-jobb for sbs i build-deploy.yml.
+          */
       ];
 
 oppdaterMetrikker(apperSomSkalMonitoreres, 60 * 1000);
