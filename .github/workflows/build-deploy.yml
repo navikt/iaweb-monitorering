@@ -53,7 +53,7 @@ jobs:
     deploy-to-prod-fss:
         name: Deploy to prod-fss
         if: github.ref == 'refs/heads/master'
-        needs: deploy-to-dev
+        needs: deploy-to-dev-fss
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v1
