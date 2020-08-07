@@ -17,15 +17,12 @@ jobs:
             - uses: actions/cache@v1
               with:
                   path: ./node_modules
-                  key: ${{ runner.os }}-node-cache-${{ hashFiles('yarn.lock') }}
+                  key: ${{ runner.os }}-node-cache-${{ hashFiles('package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-cache-
             - name: Install dependencies
               run: |
-                  yarn install --frozen-lockfile
-            - name: Build application
-              run: |
-                  yarn run build
+                  npm ci
             - name: Build tag and push Docker container
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
