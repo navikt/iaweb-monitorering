@@ -34,7 +34,7 @@ jobs:
 
     deploy-to-dev-fss:
         name: Deploy to dev-fss
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/kalkis-abtest'
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github-actions'
         needs: compile-test-and-build
         runs-on: ubuntu-latest
         steps:
