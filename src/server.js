@@ -9,7 +9,11 @@ const BASE_PATH = '/iaweb-monitorering';
 const PORT = 8080;
 
 const erIFSS = cluster ? cluster.toLowerCase().includes('fss') : true;
-const apperSomSkalMonitoreres = erIFSS ? ['iawebinternal', 'iawebsolr'] : ['iawebnav'];
+const apperSomSkalMonitoreres = erIFSS
+    ? ['iawebinternal', 'iawebsolr']
+    : [
+          /* 'iawebnav' iawebnav er skrudd av inntil videre. Spør i #arbeidsgiver-teamia for mer info */
+      ];
 
 oppdaterMetrikker(apperSomSkalMonitoreres, 60 * 1000);
 
@@ -18,7 +22,7 @@ const startServer = () => {
     app.get(`${BASE_PATH}/internal/isReady`, (req, res) => res.sendStatus(200));
 
     app.get(`${BASE_PATH}/internal/selftester`, (req, res) => {
-        hentSelftester(apperSomSkalMonitoreres).then(metrikker => {
+        hentSelftester(apperSomSkalMonitoreres).then((metrikker) => {
             res.send(metrikker);
         });
     });
