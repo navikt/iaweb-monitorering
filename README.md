@@ -10,6 +10,11 @@ Henter resultater fra selftestene til iawebsolr, iawebnav og iawebinternal, og e
 
 ---
 
+# Upgrade dependencies
+
+- bruk "ncu" kommand for check
+- bruk "ncu -u" for oppgradering 
+
 # Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
