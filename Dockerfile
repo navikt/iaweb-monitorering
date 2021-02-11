@@ -1,5 +1,5 @@
 FROM navikt/node-express:12.18-alpine
-WORKDIR /app
+WORKDIR /var/server
 
 COPY package.json ./
 COPY package-lock.json ./
