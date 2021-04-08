@@ -9,6 +9,6 @@
     "axios": "^0.21.1",
     "express": "^4.17.1",
     "prom-client": "^13.1.0",
-    "prometheus-api-metrics": "^3.1.0"
+    "prometheus-api-metrics": "^3.2.0"
   }
 }
