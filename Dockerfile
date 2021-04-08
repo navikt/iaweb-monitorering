@@ -1,4 +1,4 @@
-FROM navikt/node-express:12.18-alpine
+FROM navikt/node-express:12
 WORKDIR /var/server
 
 COPY package.json ./
