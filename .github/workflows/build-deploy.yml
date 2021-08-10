@@ -34,7 +34,7 @@ jobs:
 
     deploy-to-dev-fss:
         name: Deploy to dev-fss
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/flytte-til-namespace-arbeidsgiver'
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/oppdatere-avhengigheter-august-2021'
         needs: compile-test-and-build
         runs-on: ubuntu-latest
         steps:

@@ -10,6 +10,17 @@ Henter resultater fra selftestene til iawebsolr, iawebnav og iawebinternal, og e
 
 ---
 
+# Kjøre/teste lokalt med Docker
+
+  1. `npm install`
+  2. `docker build -t iaweb-monitorering .`
+  3. `docker run -d -p 8080:8080 iaweb-monitorering`
+  4. For å stoppe, kjør `docker stop <id>` med id-en fra forrige kommando
+  5. Tilgang til CLI, kjør `docker exec -it <id> /bin/sh`
+  6. Verifiser at applikasjon kjører: http://localhost:8080/iaweb-monitorering/internal/selftester eller http://localhost:8080/iaweb-monitorering/internal/isAlive
+
+---
+
 # Upgrade dependencies
 
 - bruk "ncu" kommand for check
