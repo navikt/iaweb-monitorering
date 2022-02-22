@@ -34,7 +34,7 @@ jobs:
 
     deploy-to-dev-fss:
         name: Deploy to dev-fss
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dependabot/deps_feb22'
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/deps_feb22'
         needs: compile-test-and-build
         runs-on: ubuntu-latest
         steps:
